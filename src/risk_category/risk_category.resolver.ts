@@ -18,7 +18,7 @@ export class RiskCategoryResolver {
     @Args('description') description: string,
     @Args('createdBy') createdBy: string,
   ) {
-    return this.riskCategoryService.createCategory(name, description, createdBy);
+    return this.riskCategoryService.createCategory({name, description, createdBy});
   }
 
   

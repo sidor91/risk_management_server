@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './risk_category.schema';
 import { Model } from 'mongoose';
+import { CreateCategoryDto } from './dto/create-category.dto';
 
 @Injectable()
 export class RiskCategoryService {
@@ -12,15 +13,9 @@ export class RiskCategoryService {
   }
 
   async createCategory(
-    name: string,
-    description: string,
-    createdBy: string,
+    dto: CreateCategoryDto
   ): Promise<Category> {
-    const newCategory = new this.categoryModel({
-      name,
-      description,
-      createdBy,
-    });
+    const newCategory = new this.categoryModel(dto);
     return await newCategory.save();
   }
 
