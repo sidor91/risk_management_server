@@ -26,7 +26,7 @@ export class Risk extends Document {
 
   @Prop({ required: true })
   @Field()
-  createdBy: string
+  createdBy: string;
 }
 
 export const RiskItemSchema = SchemaFactory.createForClass(Risk);
