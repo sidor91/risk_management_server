@@ -18,6 +18,8 @@ export class RiskItemService {
   }
 
   async deleteCategory(id: string): Promise<Risk> {
-    return await this.riskModel.findByIdAndDelete(id).exec();
+    const deletedRisk = await this.riskModel.findByIdAndDelete(id).exec();
+    if (!deletedRisk) throw new Error(`Risk with id ${id} wasn't found`);
+    return deletedRisk
   }
 }

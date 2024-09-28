@@ -20,6 +20,8 @@ export class RiskCategoryService {
   }
 
   async deleteCategory(id: string): Promise<Category> {
-    return await this.categoryModel.findByIdAndDelete(id).exec();
+    const deletedCategory = await this.categoryModel.findByIdAndDelete(id).exec();
+    if (!deletedCategory) throw new Error(`Category with id ${id} wasn't found`);
+    return deletedCategory;
   }
 }
