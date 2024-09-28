@@ -1,0 +1,23 @@
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Risk } from './risk_item.schema';
+import { Model } from 'mongoose';
+import { CreateRiskDto } from './dto/create-risk.dto';
+
+@Injectable()
+export class RiskItemService {
+  constructor(@InjectModel(Risk.name) private riskModel: Model<Risk>) {}
+
+  async findAllRisks(): Promise<Risk[]> {
+    return await this.riskModel.find().exec();
+  }
+
+  async createRisk(dto: CreateRiskDto) {
+    const newRisk = new this.riskModel(dto);
+    return await newRisk.save();
+  }
+
+  async deleteCategory(id: string): Promise<Risk> {
+    return await this.riskModel.findByIdAndDelete(id).exec();
+  }
+}
