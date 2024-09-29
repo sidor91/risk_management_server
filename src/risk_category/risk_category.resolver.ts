@@ -5,6 +5,7 @@ import {
   PaginatedCategoryResponseSchema,
 } from './risk_category.schema';
 import { PaginatedResponse } from 'src/@common/pagination.dto';
+import { SortOrder } from 'src/@common/sort-order.dto';
 
 @Resolver()
 export class RiskCategoryResolver {
@@ -14,8 +15,17 @@ export class RiskCategoryResolver {
   async getCategories(
     @Args('page', { type: () => Int, defaultValue: 1 }) page: number,
     @Args('limit', { type: () => Int, defaultValue: 10 }) limit: number,
+    @Args('sortByDateOrder', {
+      type: () => SortOrder,
+      defaultValue: SortOrder.DESC,
+    })
+    sortByDateOrder: SortOrder,
   ): Promise<PaginatedResponse<Category>> {
-    return this.riskCategoryService.findAllWithPagination(page, limit);
+    return this.riskCategoryService.findAllWithPagination({
+      page,
+      limit,
+      sortByDateOrder,
+    });
   }
 
   @Mutation(() => Category)

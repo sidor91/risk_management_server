@@ -4,6 +4,8 @@ import { Category } from './risk_category.schema';
 import { Model } from 'mongoose';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { PaginatedResponse } from 'src/@common/pagination.dto';
+import { SortAndPaginationDto } from 'src/@common/sort-and-pagination.dto';
+import { SortOrder } from 'src/@common/sort-order.dto';
 
 @Injectable()
 export class RiskCategoryService {
@@ -12,13 +14,15 @@ export class RiskCategoryService {
   ) {}
 
   async findAllWithPagination(
-    page: number,
-    limit: number,
+    dto: SortAndPaginationDto,
   ): Promise<PaginatedResponse<Category>> {
+    const { page, limit, sortByDateOrder } = dto;
+    const createdAt = sortByDateOrder === SortOrder.ASC ? 1 : -1;
+
     const [risks, total] = await Promise.all([
       this.categoryModel
         .find()
-        .sort({ createdAt: -1 })
+        .sort({ createdAt })
         .skip((page - 1) * limit)
         .limit(limit)
         .exec(),

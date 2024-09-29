@@ -4,19 +4,23 @@ import { Risk } from './risk_item.schema';
 import { Model } from 'mongoose';
 import { CreateRiskDto } from './dto/create-risk.dto';
 import { PaginatedResponse } from 'src/@common/pagination.dto';
+import { SortAndPaginationDto } from 'src/@common/sort-and-pagination.dto';
+import { SortOrder } from 'src/@common/sort-order.dto';
 
 @Injectable()
 export class RiskItemService {
   constructor(@InjectModel(Risk.name) private riskModel: Model<Risk>) {}
 
   async findAllWithPagination(
-    page: number,
-    limit: number,
+    dto: SortAndPaginationDto,
   ): Promise<PaginatedResponse<Risk>> {
+    const { page, limit, sortByDateOrder } = dto;
+    const createdAt = sortByDateOrder === SortOrder.ASC ? 1 : -1;
+
     const [risks, total] = await Promise.all([
       this.riskModel
         .find()
-        .sort({ createdAt: -1 })
+        .sort({ createdAt })
         .skip((page - 1) * limit)
         .limit(limit)
         .exec(),
