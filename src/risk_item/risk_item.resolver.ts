@@ -1,6 +1,7 @@
 import {
   Args,
   Context,
+  Int,
   Mutation,
   Parent,
   Query,
@@ -11,6 +12,8 @@ import { RiskItemService } from './risk_item.service';
 import { Risk } from './risk_item.schema';
 import { Category } from 'src/risk_category/risk_category.schema';
 import DataLoader from 'dataloader';
+import { PaginatedRiskResponseSchema } from './risk_item.schema';
+import { PaginatedResponse } from 'src/@common/pagination.dto';
 
 interface GraphQLContext {
   loaders: {
@@ -22,9 +25,12 @@ interface GraphQLContext {
 export class RiskItemResolver {
   constructor(private readonly riskItemService: RiskItemService) {}
 
-  @Query(() => [Risk])
-  async getRisks() {
-    return this.riskItemService.findAllRisks();
+  @Query(() => PaginatedRiskResponseSchema)
+  async getRisks(
+    @Args('page', { type: () => Int, defaultValue: 1 }) page: number,
+    @Args('limit', { type: () => Int, defaultValue: 10 }) limit: number,
+  ): Promise<PaginatedResponse<Risk>> {
+    return this.riskItemService.findAllWithPagination(page, limit);
   }
 
   @ResolveField(() => Category)

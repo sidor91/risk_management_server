@@ -3,13 +3,30 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Risk } from './risk_item.schema';
 import { Model } from 'mongoose';
 import { CreateRiskDto } from './dto/create-risk.dto';
+import { PaginatedResponse } from 'src/@common/pagination.dto';
 
 @Injectable()
 export class RiskItemService {
   constructor(@InjectModel(Risk.name) private riskModel: Model<Risk>) {}
 
-  async findAllRisks(): Promise<Risk[]> {
-    return await this.riskModel.find().exec();
+  async findAllWithPagination(
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResponse<Risk>> {
+    const [risks, total] = await Promise.all([
+      this.riskModel
+        .find()
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .exec(),
+      this.riskModel.countDocuments().exec(),
+    ]);
+
+    return {
+      items: risks,
+      total,
+    };
   }
 
   async createRisk(dto: CreateRiskDto) {

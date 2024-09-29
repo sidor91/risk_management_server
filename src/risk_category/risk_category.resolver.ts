@@ -1,14 +1,21 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { RiskCategoryService } from './risk_category.service';
-import { Category } from './risk_category.schema';
+import {
+  Category,
+  PaginatedCategoryResponseSchema,
+} from './risk_category.schema';
+import { PaginatedResponse } from 'src/@common/pagination.dto';
 
 @Resolver()
 export class RiskCategoryResolver {
   constructor(private readonly riskCategoryService: RiskCategoryService) {}
 
-  @Query(() => [Category])
-  async getCategories() {
-    return this.riskCategoryService.findAll();
+  @Query(() => PaginatedCategoryResponseSchema)
+  async getCategories(
+    @Args('page', { type: () => Int, defaultValue: 1 }) page: number,
+    @Args('limit', { type: () => Int, defaultValue: 10 }) limit: number,
+  ): Promise<PaginatedResponse<Category>> {
+    return this.riskCategoryService.findAllWithPagination(page, limit);
   }
 
   @Mutation(() => Category)

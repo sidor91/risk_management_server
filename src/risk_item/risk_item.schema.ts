@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Category } from 'src/risk_category/risk_category.schema';
@@ -31,6 +31,15 @@ export class Risk extends Document {
 
   @Field(() => Category)
   category: Category;
+}
+
+@ObjectType()
+export class PaginatedRiskResponseSchema {
+  @Field(() => [Risk])
+  items: Risk[];
+
+  @Field(() => Float)
+  total: number;
 }
 
 export const RiskItemSchema = SchemaFactory.createForClass(Risk);

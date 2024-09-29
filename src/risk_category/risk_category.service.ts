@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './risk_category.schema';
 import { Model } from 'mongoose';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { PaginatedResponse } from 'src/@common/pagination.dto';
 
 @Injectable()
 export class RiskCategoryService {
@@ -10,8 +11,24 @@ export class RiskCategoryService {
     @InjectModel(Category.name) private categoryModel: Model<Category>,
   ) {}
 
-  async findAll(): Promise<Category[]> {
-    return await this.categoryModel.find().exec();
+  async findAllWithPagination(
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResponse<Category>> {
+    const [risks, total] = await Promise.all([
+      this.categoryModel
+        .find()
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .exec(),
+      this.categoryModel.countDocuments().exec(),
+    ]);
+
+    return {
+      items: risks,
+      total,
+    };
   }
 
   async findAllByIds(categoryIds: string[]): Promise<(Category | undefined)[]> {
