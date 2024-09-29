@@ -72,7 +72,7 @@ export class RiskItemResolver {
     @Args('name', { nullable: true }) name?: string,
     @Args('description', { nullable: true }) description?: string,
     @Args('resolved', { nullable: true }) resolved?: boolean,
-  ): Promise<Category> {
+  ) {
     return this.riskItemService.update({
       id,
       updateFields: { name, description, resolved },
