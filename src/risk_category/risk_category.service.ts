@@ -10,16 +10,31 @@ export class RiskCategoryService {
     @InjectModel(Category.name) private categoryModel: Model<Category>,
   ) {}
 
-  async findAllCategories(): Promise<Category[]> {
+  async findAll(): Promise<Category[]> {
     return await this.categoryModel.find().exec();
   }
 
-  async createCategory(dto: CreateCategoryDto): Promise<Category> {
+  async findAllByIds(categoryIds: string[]): Promise<(Category | undefined)[]> {
+    try {
+      const categories = await this.categoryModel
+        .find({ _id: { $in: categoryIds } })
+        .exec();
+
+      const categoryMap = new Map(
+        categories.map((category) => [category.id, category]),
+      );
+      return categoryIds.map((id) => categoryMap.get(id) || undefined);
+    } catch (error) {
+      return categoryIds.map(() => undefined);
+    }
+  }
+
+  async create(dto: CreateCategoryDto): Promise<Category> {
     const newCategory = new this.categoryModel(dto);
     return await newCategory.save();
   }
 
-  async deleteCategory(id: string): Promise<Category> {
+  async delete(id: string): Promise<Category> {
     const deletedCategory = await this.categoryModel
       .findByIdAndDelete(id)
       .exec();

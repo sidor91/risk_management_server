@@ -8,6 +8,10 @@ import { GraphQLModule } from '@nestjs/graphql';
       driver: ApolloDriver,
       autoSchemaFile: true,
       playground: true,
+      context: ({ req }) => ({
+        req,
+        loaders: req.loaders,
+      }),
     }),
   ],
 })

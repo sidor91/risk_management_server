@@ -11,5 +11,6 @@ import { Category, RiskCategorySchema } from './risk_category.schema';
     ]),
   ],
   providers: [RiskCategoryResolver, RiskCategoryService],
+  exports: [RiskCategoryService],
 })
 export class RiskCategoryModule {}

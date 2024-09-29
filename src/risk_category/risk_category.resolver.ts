@@ -7,17 +7,17 @@ export class RiskCategoryResolver {
   constructor(private readonly riskCategoryService: RiskCategoryService) {}
 
   @Query(() => [Category])
-  async categories() {
-    return this.riskCategoryService.findAllCategories();
+  async getCategories() {
+    return this.riskCategoryService.findAll();
   }
 
   @Mutation(() => Category)
-  async createCategory(
+  async create(
     @Args('name') name: string,
     @Args('description') description: string,
     @Args('createdBy') createdBy: string,
   ) {
-    return this.riskCategoryService.createCategory({
+    return this.riskCategoryService.create({
       name,
       description,
       createdBy,
@@ -25,7 +25,7 @@ export class RiskCategoryResolver {
   }
 
   @Mutation(() => Category)
-  async deleteCategory(@Args('id') id: string) {
-    return this.riskCategoryService.deleteCategory(id);
+  async delete(@Args('id') id: string) {
+    return this.riskCategoryService.delete(id);
   }
 }
