@@ -1,11 +1,11 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, ID, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { RiskCategoryService } from './risk_category.service';
 import {
   Category,
   PaginatedCategoryResponseSchema,
 } from './risk_category.schema';
-import { PaginatedResponse } from 'src/@common/pagination.dto';
-import { SortOrder } from 'src/@common/sort-order.dto';
+import { PaginatedResponse } from 'src/@common/dto/pagination.dto';
+import { SortOrder } from 'src/@common/dto/sort-order.dto';
 
 @Resolver()
 export class RiskCategoryResolver {
@@ -38,6 +38,18 @@ export class RiskCategoryResolver {
       name,
       description,
       createdBy,
+    });
+  }
+
+  @Mutation(() => Category)
+  async updateCategory(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('name', { nullable: true }) name?: string,
+    @Args('description', { nullable: true }) description?: string,
+  ): Promise<Category> {
+    return this.riskCategoryService.update({
+      id,
+      updateFields: { name, description },
     });
   }
 

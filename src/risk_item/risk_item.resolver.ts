@@ -1,6 +1,7 @@
 import {
   Args,
   Context,
+  ID,
   Int,
   Mutation,
   Parent,
@@ -13,8 +14,8 @@ import { Risk } from './risk_item.schema';
 import { Category } from 'src/risk_category/risk_category.schema';
 import DataLoader from 'dataloader';
 import { PaginatedRiskResponseSchema } from './risk_item.schema';
-import { PaginatedResponse } from 'src/@common/pagination.dto';
-import { SortOrder } from 'src/@common/sort-order.dto';
+import { PaginatedResponse } from 'src/@common/dto/pagination.dto';
+import { SortOrder } from 'src/@common/dto/sort-order.dto';
 
 interface GraphQLContext {
   loaders: {
@@ -62,6 +63,19 @@ export class RiskItemResolver {
       createdBy,
       categoryId,
       resolved,
+    });
+  }
+
+  @Mutation(() => Risk)
+  async updateRisk(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('name', { nullable: true }) name?: string,
+    @Args('description', { nullable: true }) description?: string,
+    @Args('resolved', {nullable: true}) resolved?: boolean
+  ): Promise<Category> {
+    return this.riskItemService.update({
+      id,
+      updateFields: { name, description, resolved },
     });
   }
 

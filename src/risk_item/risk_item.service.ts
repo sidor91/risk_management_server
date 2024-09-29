@@ -3,13 +3,18 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Risk } from './risk_item.schema';
 import { Model } from 'mongoose';
 import { CreateRiskDto } from './dto/create-risk.dto';
-import { PaginatedResponse } from 'src/@common/pagination.dto';
-import { SortAndPaginationDto } from 'src/@common/sort-and-pagination.dto';
-import { SortOrder } from 'src/@common/sort-order.dto';
+import { PaginatedResponse } from 'src/@common/dto/pagination.dto';
+import { SortAndPaginationDto } from 'src/@common/dto/sort-and-pagination.dto';
+import { SortOrder } from 'src/@common/dto/sort-order.dto';
+import { UpdateRiskDto } from './dto/update-risk.dto';
 
 @Injectable()
 export class RiskItemService {
   constructor(@InjectModel(Risk.name) private riskModel: Model<Risk>) {}
+
+  async findById(id: string) {
+    return this.riskModel.findById(id);
+  }
 
   async findAllWithPagination(
     dto: SortAndPaginationDto,
@@ -36,6 +41,37 @@ export class RiskItemService {
   async createRisk(dto: CreateRiskDto) {
     const newRisk = new this.riskModel(dto);
     return await newRisk.save();
+  }
+
+  async update(dto: UpdateRiskDto): Promise<Risk> {
+    const {
+      id,
+      updateFields: { name, description, resolved },
+    } = dto;
+    const trimmedName = name?.trim();
+    const trimmedDescription = description?.trim();
+    const notFoundMessage = `Risk with id ${id} not found`;
+
+    if (!trimmedName && !trimmedDescription) {
+      const risk = await this.findById(id);
+      if (!risk) throw new Error(notFoundMessage);
+      return risk;
+    }
+
+    let itemsToUpdate: Partial<Risk> = {};
+    if (trimmedName) itemsToUpdate.name = trimmedName;
+    if (trimmedDescription) itemsToUpdate.description = trimmedDescription;
+    if (resolved) itemsToUpdate.resolved = resolved
+
+    const updatedRisk = await this.riskModel
+      .findByIdAndUpdate(id, { $set: itemsToUpdate }, { new: true })
+      .exec();
+
+    if (!updatedRisk) {
+      throw new Error(notFoundMessage);
+    }
+
+    return updatedRisk;
   }
 
   async deleteRisk(id: string): Promise<Risk> {
