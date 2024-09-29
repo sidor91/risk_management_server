@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './risk_category.schema';
 import { Model } from 'mongoose';
@@ -75,7 +75,7 @@ export class RiskCategoryService {
       return category;
     }
 
-    let itemsToUpdate: Partial<Category> = {};
+    const itemsToUpdate: Partial<Category> = {};
     if (trimmedName) itemsToUpdate.name = trimmedName;
     if (trimmedDescription) itemsToUpdate.description = trimmedDescription;
 

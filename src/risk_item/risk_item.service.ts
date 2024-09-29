@@ -58,10 +58,10 @@ export class RiskItemService {
       return risk;
     }
 
-    let itemsToUpdate: Partial<Risk> = {};
+    const itemsToUpdate: Partial<Risk> = {};
     if (trimmedName) itemsToUpdate.name = trimmedName;
     if (trimmedDescription) itemsToUpdate.description = trimmedDescription;
-    if (resolved) itemsToUpdate.resolved = resolved
+    if (resolved) itemsToUpdate.resolved = resolved;
 
     const updatedRisk = await this.riskModel
       .findByIdAndUpdate(id, { $set: itemsToUpdate }, { new: true })
